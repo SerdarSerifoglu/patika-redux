@@ -4,11 +4,13 @@ const initialState = {
     items: [
         {
             id: "1",
-            title: "Test 1"
+            title: "Test 1",
+            completed: false
         },
         {
             id: "2",
-            title: "Test 2"
+            title: "Test 2",
+            completed: false
         }
     ]
 };
@@ -25,9 +27,13 @@ const todosSlice = createSlice({
             const { id } = action.payload;
             const item = state.items.find((item) => item.id === id);
             item.completed = !item.completed;
+        },
+        deleteTodo: (state, action) => {
+            const id = action.payload;
+            state.items = state.items.filter((item) => { return item.id != id });
         }
     }
 })
 
-export const { addTodo, toggle } = todosSlice.actions;
+export const { addTodo, toggle, deleteTodo } = todosSlice.actions;
 export default todosSlice.reducer;

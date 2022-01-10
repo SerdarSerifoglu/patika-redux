@@ -1,6 +1,6 @@
 import React from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { toggle } from "../redux/todos/todosSlice";
+import { toggle, deleteTodo } from "../redux/todos/todosSlice";
 
 const TodoList = () => {
     const dispatch = useDispatch();
@@ -11,6 +11,10 @@ const TodoList = () => {
         dispatch(toggle({id: itemId}));
     }
 
+    function deleteClick(itemId){
+        dispatch(deleteTodo(itemId));
+    }
+
     return (
         <ul className="todo-list">
         {
@@ -19,7 +23,7 @@ const TodoList = () => {
                     <div className="view">
                         <input className="toggle" type="checkbox" checked={item.completed} onChange={(e) => checkboxClick(item.id)}/>
                         <label>{item.title}</label>
-                        <button className="destroy"></button>
+                        <button className="destroy" onClick={() => { deleteClick(item.id) }}></button>
                     </div>
                 </li>
             ))
