@@ -12,7 +12,9 @@ const TodoList = () => {
     }
 
     function deleteClick(itemId){
-        dispatch(deleteTodo(itemId));
+        if(window.confirm("Emin misin?")){
+            dispatch(deleteTodo(itemId));
+        }
     }
 
     return (
