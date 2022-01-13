@@ -12,7 +12,9 @@ const initialState = {
             title: "Test 2",
             completed: false
         }
-    ]
+    ],
+    activeFilter : "all",
+
 };
 
 //redux toolkit createSlice içerisinde immerJs kütüphanesini kullanarak state'i klonlamaya gerek kalmadan düzenleme yapmamızı sağlar.
@@ -31,9 +33,16 @@ const todosSlice = createSlice({
         deleteTodo: (state, action) => {
             const id = action.payload;
             state.items = state.items.filter((item) => { return item.id != id });
+        },
+        changeActiveFilter: (state, action) => {
+            state.activeFilter = action.payload;
+        },
+        clearCompleted: (state) => {
+            const filtered = state.items.filter((item) => item.completed == false);
+            state.items = filtered
         }
     }
 })
 
-export const { addTodo, toggle, deleteTodo } = todosSlice.actions;
+export const { addTodo, toggle, deleteTodo, changeActiveFilter, clearCompleted } = todosSlice.actions;
 export default todosSlice.reducer;
