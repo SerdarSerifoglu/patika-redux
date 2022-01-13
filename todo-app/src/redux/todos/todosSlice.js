@@ -44,5 +44,7 @@ const todosSlice = createSlice({
     }
 })
 
+export const selectTodos = (state) => state.todos.items;
+
 export const { addTodo, toggle, deleteTodo, changeActiveFilter, clearCompleted } = todosSlice.actions;
 export default todosSlice.reducer;

@@ -1,12 +1,12 @@
 import React from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { toggle, deleteTodo } from "../redux/todos/todosSlice";
+import { toggle, deleteTodo, selectTodos } from "../redux/todos/todosSlice";
 
 let filtered = [];
 const TodoList = () => {
     const dispatch = useDispatch();
 
-    const items = useSelector(state => state.todos.items);
+    const items = useSelector(selectTodos);
     const activeFilter = useSelector(state => state.todos.activeFilter);
 
     const checkboxClick = (itemId) => {
