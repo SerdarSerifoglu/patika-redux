@@ -1,13 +1,12 @@
 import React from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { toggle, deleteTodo, selectTodos } from "../redux/todos/todosSlice";
+import { toggle, deleteTodo, filteredTodos } from "../redux/todos/todosSlice";
 
-let filtered = [];
+
 const TodoList = () => {
     const dispatch = useDispatch();
 
-    const items = useSelector(selectTodos);
-    const activeFilter = useSelector(state => state.todos.activeFilter);
+    const filteredTodoList = useSelector(filteredTodos);
 
     const checkboxClick = (itemId) => {
         dispatch(toggle({id: itemId}));
@@ -19,15 +18,10 @@ const TodoList = () => {
         }
     }
 
-    filtered = items;
-    if(activeFilter != "all"){
-        filtered = items.filter((todo) => activeFilter == "active" ? todo.completed == false : todo.completed == true);
-    }
-
     return (
         <ul className="todo-list">
         {
-            filtered.map((item) => (
+            filteredTodoList.map((item) => (
                 <li key={item.id} className={item.completed ? "completed" : ""}>
                     <div className="view">
                         <input className="toggle" type="checkbox" checked={item.completed} onChange={(e) => checkboxClick(item.id)}/>
