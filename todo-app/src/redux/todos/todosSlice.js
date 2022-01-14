@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, nanoid } from "@reduxjs/toolkit";
 
 const initialState = {
     items: [
@@ -22,8 +22,20 @@ const todosSlice = createSlice({
     name: "todos",
     initialState: initialState,
     reducers: {
-        addTodo: (state, action) => {
-            state.items.push(action.payload);
+        addTodo: {
+            reducer: (state, action) => {
+                state.items.push(action.payload);
+            },
+            //prepare: reducerdan hemen önce çalışan bir hook nanoid değeri componentte basılıyordu buraya taşımamızı sağladı. 
+            prepare: ({ title }) => {
+                return {
+                    payload: {
+                        id: nanoid(),
+                        completed: false,
+                        title: title,
+                    }
+                }
+            }
         },
         toggle: (state, action) => {
             const { id } = action.payload;
