@@ -7,6 +7,7 @@ const TodoList = () => {
     const dispatch = useDispatch();
 
     const filteredTodoList = useSelector(filteredTodos);
+    const isLoading = useSelector((state) => state.todos.isLoading);
 
     useEffect(() => {
         dispatch(getTodosAsync());
@@ -22,6 +23,9 @@ const TodoList = () => {
         }
     }
 
+    if(isLoading){
+        return <div>Loading...</div>
+    }
     return (
         <ul className="todo-list">
         {
