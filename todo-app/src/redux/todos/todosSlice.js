@@ -1,15 +1,23 @@
-import { createSlice, nanoid, createAsyncThunk } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import axios from "axios";
 
 export const getTodosAsync = createAsyncThunk("todos/getTodosAsync", async () => {
     const res = await fetch("http://localhost:7000/todos");
     return await res.json();
 });
 
+export const addTodoAsync = createAsyncThunk("todos/addTodoAsync", async (data) => {
+    const res = await axios.post("http://localhost:7000/todos", data);
+    return res.data;
+})
+
 const initialState = {
     items: [],
     isLoading: false,
     error: null,
     activeFilter : "all",
+    addNewTodoLoading: false,
+    addNewTodoError: null
 };
 
 //redux toolkit createSlice içerisinde immerJs kütüphanesini kullanarak state'i klonlamaya gerek kalmadan düzenleme yapmamızı sağlar.
@@ -17,21 +25,6 @@ const todosSlice = createSlice({
     name: "todos",
     initialState: initialState,
     reducers: {
-        addTodo: {
-            reducer: (state, action) => {
-                state.items.push(action.payload);
-            },
-            //prepare: reducerdan hemen önce çalışan bir hook nanoid değeri componentte basılıyordu buraya taşımamızı sağladı. 
-            prepare: ({ title }) => {
-                return {
-                    payload: {
-                        id: nanoid(),
-                        completed: false,
-                        title: title,
-                    }
-                }
-            }
-        },
         toggle: (state, action) => {
             const { id } = action.payload;
             const item = state.items.find((item) => item.id === id);
@@ -50,6 +43,7 @@ const todosSlice = createSlice({
         }
     },
     extraReducers: {
+        //get todos
         [getTodosAsync.pending]: (state, action) => {
             state.isLoading = true;
         },
@@ -60,7 +54,19 @@ const todosSlice = createSlice({
         [getTodosAsync.rejected]: (state, action) => {
             state.isLoading = false;
             state.error = action.error.message;
-        }
+        },
+        //add todo
+        [addTodoAsync.pending]: (state, action) => {
+            state.addNewTodoLoading = true;
+        },
+        [addTodoAsync.fulfilled]: (state, action) => {
+            state.items.push(action.payload);
+            state.addNewTodoLoading = false;
+        },
+        [addTodoAsync.rejected]: (state, action) => {
+            state.addNewTodoLoading = false;
+            state.error = action.error.message;
+        },
     }
 })
 
@@ -73,5 +79,5 @@ export const filteredTodos = (state) => {
         ? todo.completed == false 
         : todo.completed == true);
 }
-export const { addTodo, toggle, deleteTodo, changeActiveFilter, clearCompleted } = todosSlice.actions;
+export const { toggle, deleteTodo, changeActiveFilter, clearCompleted } = todosSlice.actions;
 export default todosSlice.reducer;
