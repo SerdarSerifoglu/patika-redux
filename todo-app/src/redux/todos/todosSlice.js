@@ -2,12 +2,17 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
 export const getTodosAsync = createAsyncThunk("todos/getTodosAsync", async () => {
-    const res = await fetch("http://localhost:7000/todos");
+    const res = await fetch(`${process.env.REACT_APP_API_BASE_ENDPOINT}/todos`);
     return await res.json();
 });
 
 export const addTodoAsync = createAsyncThunk("todos/addTodoAsync", async (data) => {
-    const res = await axios.post("http://localhost:7000/todos", data);
+    const res = await axios.post(`${process.env.REACT_APP_API_BASE_ENDPOINT}/todos`, data);
+    return res.data;
+})
+
+export const toggleTodoAsync = createAsyncThunk("todos/toggleTodoAsync", async ({id, data}) => {
+    const res = await axios.patch(`${process.env.REACT_APP_API_BASE_ENDPOINT}/todos/${id}`, data);
     return res.data;
 })
 
@@ -25,11 +30,11 @@ const todosSlice = createSlice({
     name: "todos",
     initialState: initialState,
     reducers: {
-        toggle: (state, action) => {
-            const { id } = action.payload;
-            const item = state.items.find((item) => item.id === id);
-            item.completed = !item.completed;
-        },
+        // toggle: (state, action) => {
+        //     const { id } = action.payload;
+        //     const item = state.items.find((item) => item.id === id);
+        //     item.completed = !item.completed;
+        // },
         deleteTodo: (state, action) => {
             const id = action.payload;
             state.items = state.items.filter((item) => { return item.id != id });
@@ -67,6 +72,13 @@ const todosSlice = createSlice({
             state.addNewTodoLoading = false;
             state.error = action.error.message;
         },
+        //toggle todo
+        [toggleTodoAsync.fulfilled]: (state, action) => {
+            const { id, completed } = action.payload;
+            const index = state.items.findIndex((item) => {return item.id === id});
+            state.items[index].completed = completed;
+            console.log(action.payload);
+        }
     }
 })
 
